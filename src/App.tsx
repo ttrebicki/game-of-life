@@ -104,8 +104,8 @@ const cellSpawner = async ({cellPositionsArray, cellsNumber, context, randomColo
       grd.addColorStop(0.5, randomColors?.color2 || '#dcc');
       grd.addColorStop(1, randomColors?.color3 || '#fac');
       context.strokeStyle = grd;
-      context.strokeText('BEVERLY HILLS 90210', position.x1, position.y1)
-      // context.arc(position.x1, position.y1, 48, 320, 2 * Math.PI);
+      // context.strokeText('BEVERLY HILLS 90210', position.x1, position.y1)
+      context.arc(position.x1, position.y1, 48, 320, 2 * Math.PI);
       context.stroke();
       return;
     }
@@ -131,7 +131,7 @@ function App() {
       ) as HTMLCanvasElement;
       const context = gameCanvas?.getContext("2d");
       cellSpawner({cellsNumber: 128000, context: context as CanvasRenderingContext2D, cellPositionsArray, randomColors: gradientColors, dimensions: [windowDimensions.width, windowDimensions.height]})
-  }, [gradientColors])
+  }, [gradientColors,windowDimensions])
 
   useEffect(() => {
     cb()
