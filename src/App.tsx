@@ -44,7 +44,7 @@ const compareNumbersWithRange = (
   range: number
 ) => num1 < num2 + range && num1 > num2 - range;
 
-const range = 0.128;
+const range = 4;
 
 const cellSpawner = async ({cellPositionsArray, cellsNumber, context, randomColors, dimensions}:
   {cellsNumber: number,
@@ -104,8 +104,8 @@ const cellSpawner = async ({cellPositionsArray, cellsNumber, context, randomColo
       grd.addColorStop(0.5, randomColors?.color2 || '#dcc');
       grd.addColorStop(1, randomColors?.color3 || '#fac');
       context.strokeStyle = grd;
-      // context.strokeText('BEVERLY HILLS 90210', position.x1, position.y1)
-      context.arc(position.x1, position.y1, 48, 320, 2 * Math.PI);
+      context.strokeText('xd', position.x1, position.y1)
+      // context.arc(position.x1, position.y1, 1, 1, 2 * Math.PI);
       context.stroke();
       return;
     }
