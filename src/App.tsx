@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import "./App.css";
 import { getRandomColors } from "./classes/ColorGenerator";
+import useBoomerang from "./hooks/useBoomerang";
 
 const renderImage = (context: CanvasRenderingContext2D | null, imageUrl: string, x:number, y:number, dx: number, dy: number) => {
   if (context) {
@@ -46,8 +47,9 @@ const compareNumbersWithRange = (
 
 const range = 4;
 
-const cellSpawner = async ({cellPositionsArray, cellsNumber, context, randomColors, dimensions}:
+const cellSpawner = async ({cellPositionsArray, cellsNumber, context, strokeRadius, randomColors, dimensions}:
   {cellsNumber: number,
+    strokeRadius: number,
   context: CanvasRenderingContext2D,
   cellPositionsArray: IPosition[],
   randomColors?: { color1: string; color2: string; color3: string; },
@@ -58,7 +60,7 @@ const cellSpawner = async ({cellPositionsArray, cellsNumber, context, randomColo
 
     const mainColor = "#ccc";
     const secondaryColor = "#000";
-    const ternaryColor = "#f33";
+    const ternaryColor = "#f3f3f3";
     context.strokeStyle = mainColor;
 
     const randomX = Math.ceil(Math.random() * (dimensions?.[0] || 0 / 5 || 300));
@@ -99,12 +101,12 @@ const cellSpawner = async ({cellPositionsArray, cellsNumber, context, randomColo
       )
     ) {
       context.beginPath();
-      var grd = context.createLinearGradient(0, 0, 170, 0);
-      grd.addColorStop(0, randomColors?.color1 || '#fcc');
-      grd.addColorStop(0.5, randomColors?.color2 || '#dcc');
-      grd.addColorStop(1, randomColors?.color3 || '#fac');
-      context.strokeStyle = grd;
-      context.strokeText('xd', position.x1, position.y1)
+      // var grd = context.createLinearGradient(0, 0, 170, 0);
+      // grd.addColorStop(0, randomColors?.color1 || '#fcc');
+      // grd.addColorStop(0.5, randomColors?.color2 || '#dcc');
+      // grd.addColorStop(1, randomColors?.color3 || '#fac');
+      // context.strokeStyle = grd;
+      // context.strokeText('▒░▓', position.x1, position.y1)
       // context.arc(position.x1, position.y1, 1, 1, 2 * Math.PI);
       context.stroke();
       return;
@@ -112,13 +114,14 @@ const cellSpawner = async ({cellPositionsArray, cellsNumber, context, randomColo
 
     cellPositionsArray.push(position);
 
-    context.beginPath();
-    context.arc(position.x1, position.y1, 0.1, 0, 2 * Math.PI);
+    context.beginPath();    
+    context.arc(position.x1, position.y1, strokeRadius, 0, (2 * Math.PI));
     context.stroke();
   }
 };
 
 function App() {
+  const strokeRadius = useBoomerang()
   const [gradientColors, setGradientColors] = useState<{ color1: string; color2: string; color3: string; }>()
   const [windowDimensions, setWindowDimensions] = useState({
     width: window.innerWidth,
@@ -130,7 +133,7 @@ function App() {
         "game"
       ) as HTMLCanvasElement;
       const context = gameCanvas?.getContext("2d");
-      cellSpawner({cellsNumber: 128000, context: context as CanvasRenderingContext2D, cellPositionsArray, randomColors: gradientColors, dimensions: [windowDimensions.width, windowDimensions.height]})
+      cellSpawner({cellsNumber: 128000, context: context as CanvasRenderingContext2D, cellPositionsArray, strokeRadius, randomColors: gradientColors, dimensions: [windowDimensions.width, windowDimensions.height]})
   }, [gradientColors,windowDimensions])
 
   useEffect(() => {
@@ -138,7 +141,7 @@ function App() {
   }, [cb]);
 
   useEffect(() => {
-    setInterval(() => setGradientColors(getRandomColors()), 0.00001)
+    setInterval(() => setGradientColors(getRandomColors()), 0.0001)
     
   }, [])
 
