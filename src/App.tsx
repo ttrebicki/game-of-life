@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import "./App.css";
 import { getRandomColors } from "./classes/ColorGenerator";
 import useBoomerang from "./hooks/useBoomerang";
+import useRGBABoomerang from "./hooks/useRGBABoomerang";
 
 const renderImage = (context: CanvasRenderingContext2D | null, imageUrl: string, x:number, y:number, dx: number, dy: number) => {
   if (context) {
@@ -47,20 +48,17 @@ const compareNumbersWithRange = (
 
 const range = 4;
 
-const cellSpawner = async ({cellPositionsArray, cellsNumber, context, strokeRadius, randomColors, dimensions}:
+const cellSpawner = async ({cellPositionsArray, cellsNumber, context, strokeRadius, randomColors, dimensions, mainColor = "#55c", secondaryColor = "#14e", ternaryColor = "#55ffcc"}:
   {cellsNumber: number,
     strokeRadius: number,
   context: CanvasRenderingContext2D,
   cellPositionsArray: IPosition[],
   randomColors?: { color1: string; color2: string; color3: string; },
-  dimensions?: [number,number]}
+  dimensions?: [number,number]
+mainColor?: string, secondaryColor?: string, ternaryColor?: string}
 ) => {
   for (let i = 0; i < cellsNumber; i++) {
     // await new Promise<void>((res) => setTimeout(() => {res()}, i * 1000))
-
-    const mainColor = "#ccc";
-    const secondaryColor = "#000";
-    const ternaryColor = "#f3f3f3";
     context.strokeStyle = mainColor;
 
     const randomX = Math.ceil(Math.random() * (dimensions?.[0] || 0 / 5 || 300));
@@ -101,13 +99,12 @@ const cellSpawner = async ({cellPositionsArray, cellsNumber, context, strokeRadi
       )
     ) {
       context.beginPath();
-      // var grd = context.createLinearGradient(0, 0, 170, 0);
-      // grd.addColorStop(0, randomColors?.color1 || '#fcc');
-      // grd.addColorStop(0.5, randomColors?.color2 || '#dcc');
-      // grd.addColorStop(1, randomColors?.color3 || '#fac');
-      // context.strokeStyle = grd;
-      // context.strokeText('▒░▓', position.x1, position.y1)
-      // context.arc(position.x1, position.y1, 1, 1, 2 * Math.PI);
+      var grd = context.createLinearGradient(0, 0, 170, 0);
+      grd.addColorStop(0, '#fcc');
+      grd.addColorStop(0.5, '#dcc');
+      grd.addColorStop(1, '#fac');
+      context.strokeStyle = grd;
+      context.arc(position.x1, position.y1, 1, 2, (2 * Math.PI));
       context.stroke();
       return;
     }
@@ -122,6 +119,9 @@ const cellSpawner = async ({cellPositionsArray, cellsNumber, context, strokeRadi
 
 function App() {
   const strokeRadius = useBoomerang()
+  const mainColor = useRGBABoomerang({r:100,g:100,b:100,a: 100})
+  const secondaryColor = useRGBABoomerang({r:200,g:100,b:50,a: 100})
+  const ternaryColor = useRGBABoomerang({r:250,g:50,b:100,a: 100})
   const [gradientColors, setGradientColors] = useState<{ color1: string; color2: string; color3: string; }>()
   const [windowDimensions, setWindowDimensions] = useState({
     width: window.innerWidth,
@@ -133,7 +133,7 @@ function App() {
         "game"
       ) as HTMLCanvasElement;
       const context = gameCanvas?.getContext("2d");
-      cellSpawner({cellsNumber: 128000, context: context as CanvasRenderingContext2D, cellPositionsArray, strokeRadius, randomColors: gradientColors, dimensions: [windowDimensions.width, windowDimensions.height]})
+      cellSpawner({mainColor, secondaryColor, ternaryColor, cellsNumber: 128000, context: context as CanvasRenderingContext2D, cellPositionsArray, strokeRadius, randomColors: gradientColors, dimensions: [windowDimensions.width, windowDimensions.height]})
   }, [gradientColors,windowDimensions])
 
   useEffect(() => {
@@ -168,7 +168,7 @@ function App() {
 
   return (
     <>
-      <canvas width={windowDimensions.width / 5} height={windowDimensions.height / 5} id={"game"} className={"game"} />
+      <canvas width={windowDimensions.width} height={windowDimensions.height} id={"game"} className={"game"} />
     </>
   );
 }

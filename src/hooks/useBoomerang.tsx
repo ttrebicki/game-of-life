@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-function useBoomerang(initialValue = 0.1, step = 1, max = 1500, min = 0.1) {
+function useBoomerang(initialValue = 0.001, step = 0.001, max = 2, min = 0.001) {
   const [value, setValue] = useState(initialValue);
   const [direction, setDirection] = useState(1); // 1 for increment, -1 for decrement
 
